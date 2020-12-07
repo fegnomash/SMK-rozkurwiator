@@ -47,9 +47,7 @@ def arkusz():
     
  
 def dzialanie(table, rok, kod, nazwisko, miejsce, nazwa, xpath):
-    for i in range(table.shape[0]):
-        #driver.find_element_by_xpath('//button[@title="Dodaj"]').click()
-        #wait.until(EC.element_to_be_clickable((By.XPATH, "//body[1]/div[3]/div[4]/div[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/fieldset[1]/table[1]/tbody[1]/tr[2]/td[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/table[1]/tbody[1]/tr[2]/td[1]/div[1]/table[1]/tbody[1]/tr[5]/td[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/div[1]/div[1]/table[1]/tbody[1]/tr[1]/td[1]/button[1]"))).click()
+    for i in range(table.shape[0])
         wait.until(EC.element_to_be_clickable((By.XPATH, xpath))).click()
     for i in range(table.shape[0]):
         #data
