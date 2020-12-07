@@ -3,7 +3,7 @@
 Created on Sun Dec  6 23:50:58 2020
 SMK ROZKURWIATOR 0.5
 Zmiany: 
-    -improved parsing of xls spreadsheets
+    -dodana obsługa własnych tabel
 @author: samue
 """
 
