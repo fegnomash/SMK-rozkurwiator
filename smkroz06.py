@@ -8,22 +8,29 @@ Zmiany:
 """
 
 import os
+import sys
+import selenium.common.exceptions
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 import pandas as pd
 import xlrd
 import tkinter
 
 
 def arkusz(): 
-    lista = os.listdir('.\\arkusz')
+    lista = os.listdir('./arkusz')
     duzaDf = pd.DataFrame()
-    for l in range(len(lista)): 
-        xls_file = pd.ExcelFile(os.path.join('.\\arkusz', lista[l]))
+    for l in range(len(lista)):
+        try:
+            xls_file = pd.ExcelFile(os.path.join('./arkusz', lista[l]))
+        except ValueError:
+            print("Cannot read file "+lista[l], file=sys.stderr)
+            continue
         df = xls_file.parse(0)
         duzaDf = duzaDf.append(df, ignore_index=True)
         duzaDf = duzaDf.astype(str)
@@ -70,11 +77,21 @@ def dzialanie(table, rok, kod, nazwisko, miejsce, nazwa, xpath):
         #nazwisko
         wait.until(EC.element_to_be_clickable((By.XPATH, "//tbody/tr[" + str(i+1) + "]/td[6]/div[1]/input[1]"))).send_keys(nazwisko)
         #miejsce
-        miejscestazu = Select(wait.until(EC.element_to_be_clickable((By.XPATH,"//tbody/tr[" + str(i+1) + "]/td[7]/div[1]/select[1]"))))
-        miejscestazu.select_by_index(miejsce)
+        miejscestazu_element = wait.until(EC.element_to_be_clickable((By.XPATH, "//tbody/tr[" + str(i + 1) + "]/td[7]/div[1]/select[1]")))
+        miejscestazu = Select(miejscestazu_element)
+        try:
+            miejscestazu.select_by_index(miejsce)
+        except selenium.common.exceptions.WebDriverException:
+            for j in range(int(miejsce)):
+                miejscestazu_element.send_keys(Keys.ARROW_DOWN)
         #nazwastazu
-        nazwaStazu = Select(wait.until(EC.element_to_be_clickable((By.XPATH, "//tbody/tr[" + str(i+1) + "]/td[8]/div[1]/select[1]"))))
-        nazwaStazu.select_by_index(nazwa)
+        nazwaStazu_element = wait.until(EC.element_to_be_clickable((By.XPATH, "//tbody/tr[" + str(i+1) + "]/td[8]/div[1]/select[1]")))
+        nazwaStazu = Select(nazwaStazu_element)
+        try:
+            nazwaStazu.select_by_index(nazwa)
+        except selenium.common.exceptions.WebDriverException:
+            for j in range(int(nazwa)):
+                nazwaStazu_element.send_keys(Keys.ARROW_DOWN)
         #inicjaly
         wait.until(EC.element_to_be_clickable((By.XPATH, "//tbody/tr[" + str(i+1) + "]/td[9]/div[1]/input[1]"))).send_keys(table.iat[i,5]) 
         #plec
@@ -171,13 +188,17 @@ class Okno(tkinter.Tk):
         
 
 #def main():
-driver = webdriver.Chrome(".\\chromedriver.exe")
 options = Options()
 options.add_argument("start-maximized")
 options.add_argument("disable-infobars")
 options.add_argument("--disable-extensions")
 options.add_argument("--log-level=3")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
+try:
+    driver = webdriver.Chrome(".\\chromedriver.exe")
+except selenium.common.exceptions.WebDriverException:
+    driver = webdriver.Firefox()
+driver.maximize_window()
 wait = WebDriverWait(driver, 50, poll_frequency=1)
 driver.get("https://smk.ezdrowie.gov.pl/login.jsp?locale=pl")
 tabela = arkusz()
@@ -186,6 +207,6 @@ app.title("SMK Rozkurwiator 0.6")
 app.mainloop() 
 arg = [app.rok, app.kod, app.osoba, app.miejsce, app.nazwa, app.xpath]
 dzialanie(tabela, *arg)
-input()    
+input()
 # if __name__ == "__main__":
 #     main()
