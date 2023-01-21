@@ -23,11 +23,11 @@ import tkinter
 
 
 def arkusz(): 
-    lista = os.listdir('./arkusz')
+    lista = os.listdir('arkusz')
     duzaDf = pd.DataFrame()
     for l in range(len(lista)):
         try:
-            xls_file = pd.ExcelFile(os.path.join('./arkusz', lista[l]))
+            xls_file = pd.ExcelFile(os.path.join('arkusz', lista[l]))
         except ValueError:
             print("Cannot read file "+lista[l], file=sys.stderr)
             continue
